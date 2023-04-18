@@ -1,4 +1,4 @@
-package com.rojek.onlinestore.auth;
+package com.rojek.onlinestore.game;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class GameResponse {
     private HttpStatus status;
     private String message;
 }

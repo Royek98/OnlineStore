@@ -1,6 +1,5 @@
 package com.rojek.onlinestore.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +22,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf()
-                .disable()
+                .disable()  // toDo enable csrf
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**")
+                .requestMatchers( "/api/auth/**", "/api/catalogue/games", "/api/catalogue/details")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

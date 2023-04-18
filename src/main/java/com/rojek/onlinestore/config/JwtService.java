@@ -1,13 +1,10 @@
 package com.rojek.onlinestore.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +17,11 @@ public class JwtService {
     private static final String SECRET_KEY = "472B4B6150645367566B5970337336763979244226452948404D635165546857";
 
     public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractUsernameFromBearer(String bearer) {
+        String token = bearer.substring(7);
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -37,7 +39,7 @@ public class JwtService {
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -52,7 +54,7 @@ public class JwtService {
     }
 
     private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+            return extractClaim(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
