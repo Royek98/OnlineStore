@@ -92,9 +92,17 @@ public class DatabaseInitializer {
                 .build());
 
         gameRepository.save(Game.builder()
+                .description("Testing game")
+                .price(49.99)
+                .title("The Big Test2")
+                .releaseDate(LocalDate.of(2023, 4, 18))
+                .tags(Set.of(tags.get(0), tags.get(1)))
+                .build());
+
+        gameRepository.save(Game.builder()
                 .description("Testing2 game")
                 .price(39.99)
-                .title("The Big Test2")
+                .title("Super Game 2000")
                 .releaseDate(LocalDate.of(2020, 4, 12))
                 .tags(Set.of(tags.get(3)))
                 .build());

@@ -22,7 +22,4 @@ public class Tag {
     private Integer id;
     private String name;
 
-    public Tag(String name) {
-        this.name = name;
-    }
 }

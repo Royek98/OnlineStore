@@ -2,8 +2,6 @@ package com.rojek.onlinestore.tag;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -11,10 +9,6 @@ import java.util.Set;
 public class TagService {
 
     private final TagRepository tagRepository;
-
-    public Optional<Tag> findById(Integer id) {
-        return tagRepository.findById(id);
-    }
 
     public void findByIdInList(Set<Tag> tagList) throws RuntimeException {
         // no need to return I only care about exception

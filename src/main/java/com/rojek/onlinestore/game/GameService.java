@@ -3,16 +3,15 @@ package com.rojek.onlinestore.game;
 import com.rojek.onlinestore.library.Library;
 import com.rojek.onlinestore.library.LibraryService;
 import com.rojek.onlinestore.tag.Tag;
-import com.rojek.onlinestore.tag.TagRepository;
 import com.rojek.onlinestore.tag.TagService;
 import com.rojek.onlinestore.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +80,13 @@ public class GameService {
                     .build();
         }
 
+        if (gameRequest.getTags().isEmpty()) {
+            return GameResponse.builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .message("Tags are missing")
+                    .build();
+        }
+
         if (gameRepository.findGameByTitle(gameRequest.getTitle()).isPresent()) {
             return GameResponse.builder()
                     .status(HttpStatus.OK)
@@ -128,6 +134,13 @@ public class GameService {
                     .build();
         }
 
+        if (gameRequest.getTags().isEmpty()) {
+            return GameResponse.builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .message("Tags are missing")
+                    .build();
+        }
+
         Game gameDb = game.get();
         // toDo better validation
         if (gameRequest.getDescription() != null) {
@@ -146,19 +159,16 @@ public class GameService {
             gameDb.setReleaseDate(gameRequest.getReleaseDate());
         }
 
-        if (!gameRequest.getTags().isEmpty()) {
-            // check if tags exist in db before updating a game details in db
-            try {
-                tagService.findByIdInList(gameRequest.getTags());
-            } catch (RuntimeException e) {
-                return GameResponse.builder()
-                        .status(HttpStatus.NOT_FOUND)
-                        .message(e.getMessage())
-                        .build();
-            }
-
-            gameDb.setTags(gameRequest.getTags());
+        // check if tags exist in db before updating a game details in db
+        try {
+            tagService.findByIdInList(gameRequest.getTags());
+        } catch (RuntimeException e) {
+            return GameResponse.builder()
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(e.getMessage())
+                    .build();
         }
+        gameDb.setTags(gameRequest.getTags());
 
 
         saveGameToDb(gameDb);
@@ -169,4 +179,30 @@ public class GameService {
                 .build();
     }
 
+    public List<Game> searchGames(String title, List<Integer> tags) {
+        List<Game> games = getAllGames();
+
+        if (title != null) {
+            games = games.stream()
+                    .filter(game -> {
+                                String gameTitle = normalizeString(game.getTitle());
+                                String searchTitle = normalizeString(title);
+                                return gameTitle.contains(searchTitle);
+                            }
+                    ).toList();
+        }
+
+        if (tags != null && !tags.isEmpty()) {
+            games = games.stream()
+                    .filter(game -> new HashSet<>(game.getTags().stream()
+                            .map(Tag::getId).collect(Collectors.toList())).containsAll(tags)
+            ).toList();
+        }
+
+        return games;
+    }
+
+    private String normalizeString(String before) {
+        return before.toLowerCase().replaceAll(" ", "");
+    }
 }

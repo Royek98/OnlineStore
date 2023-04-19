@@ -35,6 +35,20 @@ public class GameController {
         return ResponseEntity.ok(game.get());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchGame(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "tags", required = false) List<Integer> tags
+    ) {
+        List<Game> games = gameService.searchGames(title, tags);
+
+        if (games.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No matches for searched criteria");
+        }
+
+        return ResponseEntity.ok().body(games);
+    }
+
     @PostMapping("/purchase")
     public ResponseEntity<String> buyGame(
             @RequestHeader(name = "Authorization") String bearer,
@@ -88,8 +102,7 @@ public class GameController {
             return ResponseEntity.status(response.getStatus()).body(response.getMessage());
         }
 
-        // toDo change this response
-        return ResponseEntity.ok("");
+        return ResponseEntity.badRequest().body("Something went wrong");
     }
 
     private User authenticateAndAuthorize(String bearer, Role requiredRole) {
