@@ -2,6 +2,9 @@ package com.rojek.onlinestore.game;
 
 import com.rojek.onlinestore.library.Library;
 import com.rojek.onlinestore.library.LibraryService;
+import com.rojek.onlinestore.tag.Tag;
+import com.rojek.onlinestore.tag.TagRepository;
+import com.rojek.onlinestore.tag.TagService;
 import com.rojek.onlinestore.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +21,7 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final LibraryService libraryService;
+    private final TagService tagService;
 
     public List<Game> getAllGames() {
         return gameRepository.findAll();
@@ -67,23 +73,32 @@ public class GameService {
                 .build();
     }
 
-    public GameResponse saveGame(Game game) {
-        if (game == null) {
+    public GameResponse saveGame(Game gameRequest) {
+        if (gameRequest == null) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .message("Request body is empty")
                     .build();
         }
 
-        // todo check if game exists in db
-        if (gameRepository.findGameByTitle(game.getTitle()).isPresent()) {
+        if (gameRepository.findGameByTitle(gameRequest.getTitle()).isPresent()) {
             return GameResponse.builder()
                     .status(HttpStatus.OK)
                     .message("Game already exists")
                     .build();
         }
 
-        saveGameToDb(game);
+        // check if tags exist in db before saving a new game to db
+        try {
+            tagService.findByIdInList(gameRequest.getTags());
+        } catch (RuntimeException e) {
+            return GameResponse.builder()
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(e.getMessage())
+                    .build();
+        }
+
+        saveGameToDb(gameRequest);
         return GameResponse.builder()
                 .status(HttpStatus.OK)
                 .message("Game added")
@@ -130,6 +145,21 @@ public class GameService {
         if (gameDb.getReleaseDate() != gameRequest.getReleaseDate() && gameRequest.getReleaseDate() != null) {
             gameDb.setReleaseDate(gameRequest.getReleaseDate());
         }
+
+        if (!gameRequest.getTags().isEmpty()) {
+            // check if tags exist in db before updating a game details in db
+            try {
+                tagService.findByIdInList(gameRequest.getTags());
+            } catch (RuntimeException e) {
+                return GameResponse.builder()
+                        .status(HttpStatus.NOT_FOUND)
+                        .message(e.getMessage())
+                        .build();
+            }
+
+            gameDb.setTags(gameRequest.getTags());
+        }
+
 
         saveGameToDb(gameDb);
 

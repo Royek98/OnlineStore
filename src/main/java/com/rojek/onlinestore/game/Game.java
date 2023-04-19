@@ -1,15 +1,15 @@
 package com.rojek.onlinestore.game;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.rojek.onlinestore.tag.Tag;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -28,5 +28,10 @@ public class Game {
     private LocalDate releaseDate;
     private double price;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "game_tag",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new HashSet<>();
 
 }
