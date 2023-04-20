@@ -50,6 +50,8 @@ public class GameService {
     }
 
     public GameResponse deleteGame(Integer gameId) {
+
+        //check gameID param
         if (gameId == null) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -57,6 +59,7 @@ public class GameService {
                     .build();
         }
 
+        // check game in db
         Optional<Game> gameDb = findGameById(gameId);
         if (!gameDb.isPresent()) {
             return GameResponse.builder()
@@ -73,6 +76,8 @@ public class GameService {
     }
 
     public GameResponse saveGame(Game gameRequest) {
+
+        // check request body
         if (gameRequest == null) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -80,6 +85,7 @@ public class GameService {
                     .build();
         }
 
+        // check game's tags
         if (gameRequest.getTags().isEmpty()) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -87,6 +93,7 @@ public class GameService {
                     .build();
         }
 
+        // check if a game already exists
         if (gameRepository.findGameByTitle(gameRequest.getTitle()).isPresent()) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -112,6 +119,8 @@ public class GameService {
     }
 
     public GameResponse updateGame(Game gameRequest, Integer gameId) {
+
+        // check gameId param
         if (gameId == null) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -119,6 +128,7 @@ public class GameService {
                     .build();
         }
 
+        // check request body
         if (gameRequest == null) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -126,6 +136,7 @@ public class GameService {
                     .build();
         }
 
+        // check if game is in db
         Optional<Game> game = findGameById(gameId);
         if (!game.isPresent()) {
             return GameResponse.builder()
@@ -134,6 +145,7 @@ public class GameService {
                     .build();
         }
 
+        // check game's tags
         if (gameRequest.getTags() == null) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -159,7 +171,7 @@ public class GameService {
             gameDb.setReleaseDate(gameRequest.getReleaseDate());
         }
 
-        // check if tags exist in db before updating a game details in db
+        // check if tags exist in db before updating a game details
         try {
             tagService.findByIdInList(gameRequest.getTags());
         } catch (RuntimeException e) {
@@ -180,8 +192,10 @@ public class GameService {
     }
 
     public List<Game> searchGames(String title, List<Integer> tags) {
+
         List<Game> games = getAllGames();
 
+        // filter list by title
         if (title != null) {
             games = games.stream()
                     .filter(game -> {
@@ -192,6 +206,7 @@ public class GameService {
                     ).toList();
         }
 
+        // filter list by tags
         if (tags != null && !tags.isEmpty()) {
             games = games.stream()
                     .filter(game -> new HashSet<>(game.getTags().stream()

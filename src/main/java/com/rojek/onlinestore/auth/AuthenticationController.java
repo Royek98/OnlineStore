@@ -34,7 +34,6 @@ public class AuthenticationController {
                             .build(),
                     HttpStatus.NOT_FOUND
             );
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 

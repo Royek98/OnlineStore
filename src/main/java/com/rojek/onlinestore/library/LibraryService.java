@@ -5,7 +5,7 @@ import com.rojek.onlinestore.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +18,8 @@ public class LibraryService {
 
     @Transactional
     public void saveToLibrary(Game game, User user) {
+
+        // check if user already own the game
         if (libraryRepository.findByUserAndGame(user, game).isPresent()) {
             throw new RuntimeException("Already have this game");
         }
@@ -25,7 +27,7 @@ public class LibraryService {
         libraryRepository.save(Library.builder()
                 .game(game)
                 .user(user)
-                .date(new Date(System.currentTimeMillis()))
+                .date(LocalDate.now())
                 .keyCode(UUID.randomUUID())
                 .build());
     }
@@ -35,6 +37,8 @@ public class LibraryService {
     }
 
     public Library getDetails(Game game, User user) {
+
+        // check if user don't own the game
         Optional<Library> details = libraryRepository.findByUserAndGame(user, game);
         if (!details.isPresent()) {
             throw new RuntimeException("You dont own this game");

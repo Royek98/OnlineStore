@@ -28,10 +28,13 @@ public class GameController {
 
     @GetMapping("/details")
     public ResponseEntity<?> getGameDetails(@RequestParam("gameId") int gameId) {
+
+        // check if game exists
         Optional<Game> game = gameService.findGameById(gameId);
         if (!game.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found");
         }
+
         return ResponseEntity.ok(game.get());
     }
 
@@ -40,6 +43,7 @@ public class GameController {
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "tags", required = false) List<Integer> tags
     ) {
+        // filter list by title and tags
         List<Game> games = gameService.searchGames(title, tags);
 
         if (games.isEmpty()) {
@@ -54,11 +58,13 @@ public class GameController {
             @RequestHeader(name = "Authorization") String bearer,
             @RequestParam("gameId") int gameId) {
 
+        // check user
         Optional<User> user = userService.findUserByBearer(bearer);
         if (!user.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
+        // check game
         Optional<Game> game = gameService.findGameById(gameId);
         if (!game.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found");
@@ -80,12 +86,14 @@ public class GameController {
             @RequestBody(required = false) Game gameRequest,
             HttpServletRequest request
     ) {
+        // check role
         try {
             authenticateAndAuthorize(bearer, Role.ADMIN);
         } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
 
+        // check request method
         String method = request.getMethod();
         if (method.equals("DELETE")) {
             GameResponse response = gameService.deleteGame(gameId);
@@ -106,6 +114,8 @@ public class GameController {
     }
 
     private User authenticateAndAuthorize(String bearer, Role requiredRole) {
+
+        // find user by bearer and check his authority
         User user = userService.findUserByBearer(bearer).orElseThrow(() -> new RuntimeException("User not found"));
         if (!user.getAuthorities().contains(new SimpleGrantedAuthority(requiredRole.name()))) {
             throw new AccessDeniedException("User does not have the required authority");

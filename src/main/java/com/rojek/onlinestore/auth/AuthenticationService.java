@@ -24,6 +24,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        // check if email is taken
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return AuthenticationResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
@@ -31,6 +32,7 @@ public class AuthenticationService {
                     .build();
         }
 
+        // create user and generate jwt token
         var user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -45,13 +47,16 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        // check if email is correct
         var user = userRepository.findByEmail(request.getEmail()).
                 orElseThrow(() -> new UsernameNotFoundException("Bad credentials"));
 
+        // authenticate user
         authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
+        // generate jwt token
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .status(HttpStatus.OK)

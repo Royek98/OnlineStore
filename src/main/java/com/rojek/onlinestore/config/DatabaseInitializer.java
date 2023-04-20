@@ -2,6 +2,8 @@ package com.rojek.onlinestore.config;
 
 import com.rojek.onlinestore.game.Game;
 import com.rojek.onlinestore.game.GameRepository;
+import com.rojek.onlinestore.library.Library;
+import com.rojek.onlinestore.library.LibraryRepository;
 import com.rojek.onlinestore.tag.Tag;
 import com.rojek.onlinestore.tag.TagRepository;
 import com.rojek.onlinestore.user.Role;
@@ -13,9 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class DatabaseInitializer {
     private final PasswordEncoder passwordEncoder;
     private final GameRepository gameRepository;
     private final TagRepository tagRepository;
+    private final LibraryRepository libraryRepository;
 
     @Bean
     InitializingBean init() {
@@ -40,10 +43,11 @@ public class DatabaseInitializer {
           if (gameRepository.findAll().isEmpty()) {
               initGames();
           }
+
         };
     }
 
-    public void initTags() {
+    private void initTags() {
         tagRepository.save(Tag.builder()
                 .name("Horror")
                 .build());
@@ -61,7 +65,7 @@ public class DatabaseInitializer {
                 .build());
     }
 
-    public void initUsers() {
+    private void initUsers() {
         userRepository.save(User.builder()
                 .email("user@user.com")
                 .password(passwordEncoder.encode("user"))
@@ -81,7 +85,7 @@ public class DatabaseInitializer {
                 .build());
     }
 
-    public void initGames() {
+    private void initGames() {
         List<Tag> tagList = tagRepository.findAll();
 
         Game game1 = Game.builder()

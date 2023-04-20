@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -31,6 +31,6 @@ public class Library {
     private User user;
 
     private UUID keyCode;
-    private Date date;
+    private LocalDate date;
 
 }
