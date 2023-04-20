@@ -15,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "library")
 public class Library {
 
     @Id
@@ -29,7 +30,7 @@ public class Library {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private UUID key;
+    private UUID keyCode;
     private Date date;
 
 }

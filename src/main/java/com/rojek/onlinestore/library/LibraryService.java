@@ -26,7 +26,7 @@ public class LibraryService {
                 .game(game)
                 .user(user)
                 .date(new Date(System.currentTimeMillis()))
-                .key(UUID.randomUUID())
+                .keyCode(UUID.randomUUID())
                 .build());
     }
 

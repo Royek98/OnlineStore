@@ -1,16 +1,26 @@
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/OnlineStoreDb
+#    username: postgres
+#    password: admin
+#    driver-class-name: org.postgresql.Driver
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#    database: postgresql
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/OnlineStoreDb
-    username: postgres
-    password: admin
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:h2:mem:OnlineStoreDb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-
