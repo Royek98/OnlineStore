@@ -52,7 +52,7 @@ public class GameService {
     public GameResponse deleteGame(Integer gameId) {
         if (gameId == null) {
             return GameResponse.builder()
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.BAD_REQUEST)
                     .message("gameId param is empty")
                     .build();
         }
@@ -89,7 +89,7 @@ public class GameService {
 
         if (gameRepository.findGameByTitle(gameRequest.getTitle()).isPresent()) {
             return GameResponse.builder()
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.BAD_REQUEST)
                     .message("Game already exists")
                     .build();
         }
@@ -106,7 +106,7 @@ public class GameService {
 
         saveGameToDb(gameRequest);
         return GameResponse.builder()
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .message("Game added")
                 .build();
     }
@@ -114,7 +114,7 @@ public class GameService {
     public GameResponse updateGame(Game gameRequest, Integer gameId) {
         if (gameId == null) {
             return GameResponse.builder()
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.BAD_REQUEST)
                     .message("gameId param is empty")
                     .build();
         }
@@ -134,7 +134,7 @@ public class GameService {
                     .build();
         }
 
-        if (gameRequest.getTags().isEmpty()) {
+        if (gameRequest.getTags() == null) {
             return GameResponse.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .message("Tags are missing")

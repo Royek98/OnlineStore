@@ -23,7 +23,8 @@ public class LibraryController {
     public ResponseEntity<?> getAll(
             @RequestHeader(name = "Authorization") String bearer
     ) {
-        User user = userService.findUserByBearer(bearer).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userService.findUserByBearer(bearer)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         var list = libraryService.getAllGamesByUser(user);
         if (list.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library is empty");
@@ -37,8 +38,10 @@ public class LibraryController {
             @RequestHeader(name = "Authorization") String bearer,
             @RequestParam("gameId") int gameId
     ) {
-        User user = userService.findUserByBearer(bearer).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        Game game = gameService.findGameById(gameId).orElseThrow(() -> new RuntimeException("Game not found"));
+        User user = userService.findUserByBearer(bearer)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Game game = gameService.findGameById(gameId)
+                .orElseThrow(() -> new RuntimeException("Game not found"));
 
         try {
             return ResponseEntity.ok(libraryService.getDetails(game, user));

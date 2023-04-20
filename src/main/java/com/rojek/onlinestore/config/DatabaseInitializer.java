@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ public class DatabaseInitializer {
         };
     }
 
-    private void initTags() {
+    public void initTags() {
         tagRepository.save(Tag.builder()
                 .name("Horror")
                 .build());
@@ -60,7 +61,7 @@ public class DatabaseInitializer {
                 .build());
     }
 
-    private void initUsers() {
+    public void initUsers() {
         userRepository.save(User.builder()
                 .email("user@user.com")
                 .password(passwordEncoder.encode("user"))
@@ -80,32 +81,36 @@ public class DatabaseInitializer {
                 .build());
     }
 
-    private void initGames() {
-        List<Tag> tags = tagRepository.findAll();
+    public void initGames() {
+        List<Tag> tagList = tagRepository.findAll();
 
-        gameRepository.save(Game.builder()
+        Game game1 = Game.builder()
                 .description("Testing game")
                 .price(49.99)
                 .title("The Big Test")
                 .releaseDate(LocalDate.of(2023, 4, 18))
-                .tags(Set.of(tags.get(0), tags.get(1)))
-                .build());
+                .tags(Set.of(tagList.get(0), tagList.get(1)))
+                .build();
+        gameRepository.save(game1);
 
-        gameRepository.save(Game.builder()
+        Game game2 = Game.builder()
                 .description("Testing game")
                 .price(49.99)
                 .title("The Big Test2")
                 .releaseDate(LocalDate.of(2023, 4, 18))
-                .tags(Set.of(tags.get(0), tags.get(1)))
-                .build());
+                .tags(Set.of(tagList.get(0), tagList.get(1)))
+                .build();
+        gameRepository.save(game2);
 
-        gameRepository.save(Game.builder()
+        Game game3 = Game.builder()
                 .description("Testing2 game")
                 .price(39.99)
                 .title("Super Game 2000")
                 .releaseDate(LocalDate.of(2020, 4, 12))
-                .tags(Set.of(tags.get(3)))
-                .build());
+                .tags(Set.of(tagList.get(3)))
+                .build();
+        gameRepository.save(game3);
+
     }
 
 }

@@ -27,7 +27,14 @@ public class AuthenticationController {
         try {
             return ResponseEntity.ok(authenticationService.authenticate(request));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return new ResponseEntity<>(
+                    AuthenticationResponse.builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .message(e.getMessage())
+                            .build(),
+                    HttpStatus.NOT_FOUND
+            );
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 

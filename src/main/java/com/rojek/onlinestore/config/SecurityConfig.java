@@ -24,7 +24,12 @@ public class SecurityConfig {
                 .csrf()
                 .disable()  // toDo enable csrf
                 .authorizeHttpRequests()
-                .requestMatchers( "/api/auth/**", "/api/catalogue/games", "/api/catalogue/search", "/api/catalogue/details")
+                .requestMatchers(
+                        "/api/auth/**",
+                        "/api/catalogue/games",
+                        "/api/catalogue/search",
+                        "/api/catalogue/details"
+                )
                 .permitAll()
                 .anyRequest()
                 .authenticated()
