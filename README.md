@@ -9,7 +9,10 @@ This is a REST API made as a recruitment task to CD Project Red.
 - Admin Panel: admin can add/edit/delete game.
 
 ### Database diagram visualization
+
 ![Image of database diagram visualization](docs/database.png)
+
+Database used: H2.
 
 ----------------------------
 
@@ -28,3 +31,5 @@ This is a REST API made as a recruitment task to CD Project Red.
 | /api/catalogue/search      | GET    | Search games by title and tags          | None            | title: string,<br/>tags:array[integer] | None                                                                                                                                                                                        | list: Game                                               |
 | /api/library               | GET    | Get all games owned by a user           | Authorization   | None                                   | None                                                                                                                                                                                        | list: Game                                               |
 | /api/library/details       | GET    | Get details of the game owned by a user | Authorization   | gameId: Integer                        | None                                                                                                                                                                                        | list: Game                                               |
+
+Authorization requires a JSON Web Token (JWT).
