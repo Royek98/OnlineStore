@@ -1,5 +1,4 @@
 # OnlineStore
-This is a REST API with JWT authentication.
 
 ### The application includes the following functionality:
 - Users system: allows user to create an account and log in.
